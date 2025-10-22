@@ -89,13 +89,31 @@ function RoomPage() {
     saveName(trimmed);
     setHasJoined(true);
   };
+const commitEstimate = () => {
+  if (estimateInput === '') {
+    socket.emit('updateEstimate', null);
+    return;
+  }
 
-  const commitEstimate = () => {
-    if (estimateInput === '') {
-      socket.emit('updateEstimate', null);
-      return;
-    }
-    const numericValue = Number(estimateInput);
+  const numericValue = Number(estimateInput);
+  if (!Number.isNaN(numericValue)) {
+    socket.emit('updateEstimate', numericValue);
+  }
+};
+
+const handleEstimateChange = (event) => {
+  const { value } = event.target;
+  setEstimateInput(value);
+};
+
+const handleEstimateKeyDown = (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    commitEstimate();
+  }
+};
+
+
     if (!Number.isNaN(numericValue)) {
       socket.emit('updateEstimate', numericValue);
     }
