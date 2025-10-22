@@ -89,17 +89,45 @@ function RoomPage() {
     saveName(trimmed);
     setHasJoined(true);
   };
+const commitEstimate = () => {
+  if (estimateInput === '') {
+    socket.emit('updateEstimate', null);
+    return;
+  }
+
+  const numericValue = Number(estimateInput);
+  if (!Number.isNaN(numericValue)) {
+    socket.emit('updateEstimate', numericValue);
+  }
+};
+
+const handleEstimateChange = (event) => {
+  const { value } = event.target;
+  setEstimateInput(value);
+};
+
+const handleEstimateKeyDown = (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    commitEstimate();
+  }
+};
+
+
+    if (!Number.isNaN(numericValue)) {
+      socket.emit('updateEstimate', numericValue);
+    }
+  };
 
   const handleEstimateChange = (event) => {
     const { value } = event.target;
     setEstimateInput(value);
-    if (value === '') {
-      socket.emit('updateEstimate', null);
-      return;
-    }
-    const numericValue = Number(value);
-    if (!Number.isNaN(numericValue)) {
-      socket.emit('updateEstimate', numericValue);
+  };
+
+  const handleEstimateKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      commitEstimate();
     }
   };
 
@@ -224,7 +252,9 @@ function RoomPage() {
                       step="0.25"
                       value={estimateInput}
                       onChange={handleEstimateChange}
+                      onKeyDown={handleEstimateKeyDown}
                       placeholder="?"
+                      title="Press Enter to submit your estimate"
                       disabled={roomState.controlsLocked && !isHost}
                     />
                   ) : (
